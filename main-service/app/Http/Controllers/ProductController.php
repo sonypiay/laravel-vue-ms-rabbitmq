@@ -22,7 +22,7 @@ class ProductController extends Controller
         $getUser = Http::withHeaders([
                 'X-Requested-With' => 'XMLHttpRequest'
             ])
-            ->get("http://localhost:8000/api/user");
+            ->get("http://admin_app:8000/api/user");
 
         if( $getUser->status() != 200 ) throw new NotFoundHttpException("User not found");
 
