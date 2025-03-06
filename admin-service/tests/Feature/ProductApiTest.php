@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -30,16 +31,26 @@ class ProductApiTest extends TestCase
      */
     public function test_get_product_by_id(): void
     {
+        $createResponse = $this->postJson("/api/products", [
+            "title" => "Samsung",
+            "image" => "samsung"
+        ]);
+
+        $createResponse->assertCreated();
+        $createResponse->assertJson(['title' => 'Samsung']);
+
+        $productId = $createResponse['id'];
+
         $response = $this
             ->withHeaders([
                 'X-Requested-With', 'XMLHttpRequest'
             ])
-            ->getJson('/api/products/1');
+            ->getJson('/api/products/' . $productId);
 
-        $this->assertEquals(200, $response->status());
-        $this->assertJson($response->baseResponse->getContent());
-        $this->assertArrayHasKey('id', $response);
-        $this->assertEquals(1, $response['id']);
+        $response->assertOk();
+        $response->assertJson([
+            'title' => 'Samsung',
+        ]);
     }
 
     /**

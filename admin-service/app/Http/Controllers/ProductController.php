@@ -34,7 +34,7 @@ class ProductController extends Controller
             'image' => $request->image,
         ]);
 
-        ProductCreated::dispatch($result->toArray())->onQueue('demo-queue');
+        ProductCreated::dispatch($result->toArray())->onQueue('main-queue');
 
         return Response::json($result, HttpFoundationResponse::HTTP_CREATED);
     }
@@ -52,7 +52,7 @@ class ProductController extends Controller
         $product->image = $request->image ?? $product->image;
         $product->save();
 
-        ProductUpdated::dispatch($product->toArray())->onQueue('demo-queue');
+        ProductUpdated::dispatch($product->toArray())->onQueue('main-queue');
 
         return Response::json($product, HttpFoundationResponse::HTTP_ACCEPTED);
     }
@@ -60,7 +60,7 @@ class ProductController extends Controller
     public function destroy($id)
     {
         Product::where('id', $id)->delete();
-        ProductDeleted::dispatch($id)->onQueue('demo-queue');
+        ProductDeleted::dispatch($id)->onQueue('main-queue');
         
         return Response::json(['message' => 'Product successfully deleted'], HttpFoundationResponse::HTTP_OK);
     }

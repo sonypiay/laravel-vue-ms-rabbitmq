@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Jobs\ProductCreated;
-use App\Jobs\TestJob;
+use App\Jobs\ProductLiked;
 use Illuminate\Support\ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -21,6 +20,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->bindMethod(TestJob::class, 'handle', fn($jobs) => $jobs->handle());
+        $this->app->bindMethod(ProductLiked::class, 'handle', fn($jobs) => $jobs->handle());
     }
 }
