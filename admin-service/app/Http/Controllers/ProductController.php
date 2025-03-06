@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProductCreated;
+use App\Jobs\ProductDeleted;
+use App\Jobs\ProductUpdated;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -31,6 +34,8 @@ class ProductController extends Controller
             'image' => $request->image,
         ]);
 
+        ProductCreated::dispatch($result->toArray())->onQueue('demo-queue');
+
         return Response::json($result, HttpFoundationResponse::HTTP_CREATED);
     }
 
@@ -47,12 +52,16 @@ class ProductController extends Controller
         $product->image = $request->image ?? $product->image;
         $product->save();
 
+        ProductUpdated::dispatch($product->toArray())->onQueue('demo-queue');
+
         return Response::json($product, HttpFoundationResponse::HTTP_ACCEPTED);
     }
 
     public function destroy($id)
     {
         Product::where('id', $id)->delete();
+        ProductDeleted::dispatch($id)->onQueue('demo-queue');
+        
         return Response::json(['message' => 'Product successfully deleted'], HttpFoundationResponse::HTTP_OK);
     }
 }
